@@ -5,12 +5,12 @@ settings:
   excludeLinksFromLockfile: false
 
 devDependencies:
-  '@nrwl/workspace':
-    specifier: 16.7.4
-    version: 16.7.4
   '@nx/next':
     specifier: 16.7.4
     version: 16.7.4(@babel/core@7.22.11)(@types/node@20.5.7)(next@13.4.19)(nx@16.7.4)(typescript@5.1.6)(webpack@5.88.2)
+  '@nx/workspace':
+    specifier: 16.7.4
+    version: 16.7.4
   nx:
     specifier: 16.7.4
     version: 16.7.4
