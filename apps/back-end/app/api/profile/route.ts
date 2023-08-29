@@ -47,6 +47,7 @@ const inMemoryOrgsRepository = new InMemoryOrgsRepository();
 
 class PrismaPostgresOrgsRepository implements OrgsRepository {
   async create(createOngDto: CreateOngDto): Promise<OngEntity> {
+    //@ts-ignore
     const prismaOrg = await prismaClient.org.create({data: createOngDto});
     const applicationOrg = new OngEntity(prismaOrg);
     return applicationOrg;
@@ -54,6 +55,7 @@ class PrismaPostgresOrgsRepository implements OrgsRepository {
 
   async list(): Promise<OngEntity[]> {
     const prismaOrgs = await prismaClient.org.findMany();
+    //@ts-ignore
     const applicationOrgs = prismaOrgs.map(prismaOrg => new OngEntity(prismaOrg));
     return applicationOrgs;
   }
