@@ -1,5 +1,4 @@
 import { randomUUID } from "crypto";
-import { NextResponse } from "next/server";
 
 class CreateOngDto {
   name!: string;
@@ -24,6 +23,7 @@ class OngEntity extends CreateOngDto {
 
 abstract class OrgsRepository {
   abstract create(createOngDto: CreateOngDto): Promise<OngEntity>;
+  abstract list(): Promise<OngEntity[]>;
 }
 
 class InMemoryOrgsRepository extends OrgsRepository {
