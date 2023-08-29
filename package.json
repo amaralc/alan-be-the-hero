@@ -9,7 +9,7 @@
     "prisma:migrate:dev:create-only": "prisma migrate dev --schema apps/back-end/prisma/schema.prisma --create-only",
     "prisma:migrate:deploy": "prisma migrate deploy --schema apps/back-end/prisma/schema.prisma",
     "prisma:studio": "prisma studio --schema apps/back-end/prisma/schema.prisma",
-    "setup":"pnpm install && pnpm prisma:migrate:deploy"
+    "build":"bash scripts/build.sh"
   },
   "private": true,
   "devDependencies": {
