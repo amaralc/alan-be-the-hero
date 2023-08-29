@@ -1,23 +1,5 @@
-// async create(request, response) {
-
 import { randomUUID } from "crypto";
-
-//   const { name, email, whatsapp, city, uf } = request.body;
-
-//   const id = crypto.randomBytes(4).toString('HEX');
-
-//   await connection('ongs').insert({
-//       id,
-//       name,
-//       email,
-//       whatsapp,
-//       city,
-//       uf,
-//   })
-
-//   return response.json({ id });
-// }
-// }
+import { NextResponse } from "next/server";
 
 class CreateOngDto {
   name!: string;
@@ -52,6 +34,10 @@ class InMemoryOrgsRepository extends OrgsRepository {
     this.orgs.push(newOng);
     return newOng;
   }
+
+  async list(): Promise<OngEntity[]> {
+    return this.orgs;
+  }
 }
 
 const inMemoryOrgsRepository = new InMemoryOrgsRepository();
@@ -59,5 +45,10 @@ const inMemoryOrgsRepository = new InMemoryOrgsRepository();
 export async function POST(request: Request) {
   const { name, email, whatsapp, city, uf } = (await request.json()) as { name: string; email: string; whatsapp: string; city: string; uf: string }
   const ong = await inMemoryOrgsRepository.create({ name, email, whatsapp, city, uf });
-  return new Response(JSON.stringify(ong), { status: 201 });
+  return new Response(JSON.stringify(ong));
+}
+
+export async function GET() {
+  const ongs = await inMemoryOrgsRepository.list();
+  return new Response(JSON.stringify(ongs));
 }

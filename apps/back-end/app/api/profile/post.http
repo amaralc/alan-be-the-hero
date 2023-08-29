@@ -1,0 +1,11 @@
+POST http://localhost:4200/api/profile
+Content-Type: application/json
+Accept: application/json
+
+{
+  "name": "My Ong",
+  "email": "my-ong@ong.com",
+  "whatsapp": "123456",
+  "city": "Udi",
+  "uf": "MG"
+}
