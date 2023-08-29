@@ -1,4 +1,6 @@
 import { randomUUID } from "crypto";
+import { PrismaClient } from '@prisma/client'
+const prismaClient = new PrismaClient()
 
 class CreateOngDto {
   name!: string;
@@ -6,6 +8,7 @@ class CreateOngDto {
   whatsapp!: string;
   city!: string;
   uf!: string;
+  id?:string
 }
 
 class OngEntity extends CreateOngDto {
@@ -17,7 +20,7 @@ class OngEntity extends CreateOngDto {
     this.name = createOngDto.name;
     this.uf = createOngDto.uf;
     this.whatsapp = createOngDto.whatsapp;
-    this.id = randomUUID()
+    this.id = createOngDto.id ? createOngDto.id : randomUUID()
   }
 }
 
@@ -42,13 +45,41 @@ class InMemoryOrgsRepository extends OrgsRepository {
 
 const inMemoryOrgsRepository = new InMemoryOrgsRepository();
 
+class PrismaPostgresOrgsRepository implements OrgsRepository {
+  async create(createOngDto: CreateOngDto): Promise<OngEntity> {
+    const prismaOrg = await prismaClient.org.create({data: createOngDto});
+    const applicationOrg = new OngEntity(prismaOrg);
+    return applicationOrg;
+  }
+
+  async list(): Promise<OngEntity[]> {
+    const prismaOrgs = await prismaClient.org.findMany();
+    const applicationOrgs = prismaOrgs.map(prismaOrg => new OngEntity(prismaOrg));
+    return applicationOrgs;
+  }
+}
+
+const prismaPostgresOrgsRepository = new PrismaPostgresOrgsRepository();
+const databaseProvider = process.env.DATABASE_PROVIDER;
+console.log('databaseProvider', databaseProvider);
+
 export async function POST(request: Request) {
   const { name, email, whatsapp, city, uf } = (await request.json()) as { name: string; email: string; whatsapp: string; city: string; uf: string }
-  const ong = await inMemoryOrgsRepository.create({ name, email, whatsapp, city, uf });
-  return new Response(JSON.stringify(ong));
+  if(databaseProvider === 'prisma-postgres') {
+    const ong = await prismaPostgresOrgsRepository.create({ name, email, whatsapp, city, uf });
+    return new Response(JSON.stringify(ong));
+  } else {
+    const ong = await inMemoryOrgsRepository.create({ name, email, whatsapp, city, uf });
+    return new Response(JSON.stringify(ong));
+  }
 }
 
 export async function GET() {
-  const ongs = await inMemoryOrgsRepository.list();
-  return new Response(JSON.stringify(ongs));
+  if(databaseProvider === 'prisma-postgres') {
+    const ongs = await prismaPostgresOrgsRepository.list();
+    return new Response(JSON.stringify(ongs));
+  } else {
+    const ongs = await inMemoryOrgsRepository.list();
+    return new Response(JSON.stringify(ongs));
+  }
 }
